@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/vniche/distributed-tracing/orders;protocol";
+option go_package = "github.com/vniche/distributed-tracing/orders/protocol;protocol";
 
 package me.vniche.store;
 

@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,8 +21,6 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 )
-
-const port = ":50051"
 
 // ordersServer is used to implement me.vniche.store.Orders
 type orderServer struct {
@@ -65,7 +64,7 @@ func (s *orderServer) GetOrders(ctx context.Context, request *protocol.GetOrders
 
 	// run a synchronous long-running operation to emulate database operation
 	func(ctx context.Context, request *protocol.GetOrdersRequest) {
-		_, span := tracing.Tracer("datastore: cache").Start(ctx, "create product")
+		_, span := tracing.Tracer("datastore: cache").Start(ctx, "get orders")
 		defer span.End()
 
 		for _, order := range fakeOrders {
@@ -121,15 +120,21 @@ func main() {
 		time.Sleep(time.Duration(n) * time.Second)
 	}(datastoreCtx)
 
-	var lis net.Listener
-	lis, err = net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v\n", err)
-	}
-
 	span.End()
 
 	fmt.Printf("span end\n")
+
+	port := os.Getenv("SERVICE_PORT")
+	if port == "" {
+		port = "50051"
+	}
+
+	// start gRPC server
+	var lis net.Listener
+	lis, err = net.Listen("tcp", fmt.Sprintf(":%s", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v\n", err)
+	}
 
 	grcpServer := grpc.NewServer(
 		grpc.UnaryInterceptor(
