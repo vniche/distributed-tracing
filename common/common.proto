@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option go_package = "github.com/vniche/distributed-tracing/common;common";
+
+package me.vniche.store;
+
+// ChangeResponse for requests that results on a change on datastores
+message ChangeResponse {
+  // message on the result of the request
+  string message = 1;
+}
