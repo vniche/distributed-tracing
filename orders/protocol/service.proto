@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "github.com/vniche/distributed-tracing/orders;protocol";
+
+package me.vniche.store;
+
+import "common/common.proto";
+
+// Orders service is the interface to manage store products orders.
+service Orders {
+  // requests a order creation
+  // returns a change response
+  rpc CreateOrder (Order) returns (ChangeResponse) {}
+
+  // requests orders by a product id
+  // returns product orders
+  rpc GetOrders (GetOrdersRequest) returns (GetOrdersResponse) {}
+}
+
+// GetOrdersRequest represents a request payload for GetOrders method
+message GetOrdersRequest {
+  // product id of orders to be queried
+  string id = 1;
+}
+
+// GetOrdersResponse represents a response payload for GetOrders method
+message GetOrdersResponse {
+  // fetched product orders
+  repeated Order orders = 1;
+}
+
+// Order data structure
+message Order {
+  // resource unique identifier
+  string id = 1;
+  // id of ordered product
+  string product = 2;
+  // ordered quantity of product
+  int32 quantity = 3;
+}
