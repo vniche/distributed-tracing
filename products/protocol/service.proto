@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option go_package = "github.com/vniche/distributed-tracing/products/protocol;protocol";
+
+package me.vniche.store;
+
+import "common/common.proto";
+import "orders/protocol/service.proto";
+
+// Products service is the interface to manage store products.
+service Products {
+  // requets a product creation
+  // returns a change response
+  rpc CreateProduct (Product) returns (ChangeResponse) {}
+
+  // requests orders by a product id
+  // returns products orders
+  rpc GetProductOrders (GetProductOrdersRequest) returns (GetProductOrdersResponse) {}
+}
+
+// GetProductOrdersRequest represents a request payload for GetProductOrders method
+message GetProductOrdersRequest {
+  // product id of orders to be queried
+  string id = 1;
+}
+
+// GetProductOrdersResponse represents a response payload for GetProductOrders method
+message GetProductOrdersResponse {
+  // product unique identifier
+  string id = 1;
+  // human-friendly product identifier
+  string name = 2;
+  // list of fetched product orders
+  repeated Order orders = 3;
+}
+
+// Product data structure
+message Product {
+  // resource unique identifier
+  string id = 1;
+  // human-friendly resource identifier
+  string name = 2;
+}
